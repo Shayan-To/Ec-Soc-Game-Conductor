@@ -1,0 +1,53 @@
+{
+    "root": true,
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "project": true,
+        "sourceType": "module",
+        "ecmaVersion": 2020,
+        "ecmaFeatures": { "jsx": true }
+    },
+    "plugins": ["@typescript-eslint"],
+    "extends": [
+        "eslint:recommended",
+        "plugin:@next/next/recommended",
+        "plugin:@typescript-eslint/recommended-type-checked",
+        "plugin:@typescript-eslint/stylistic-type-checked",
+        "next/core-web-vitals",
+        "prettier"
+    ],
+    "rules": {
+        "curly": ["error", "all"],
+        "no-console": "warn",
+        "no-debugger": "warn",
+        "prefer-const": "warn",
+        "no-param-reassign": "error",
+        "no-constant-condition": "off",
+        "import/no-anonymous-default-export": "off",
+        "no-restricted-imports": [
+            "error",
+            {
+                "paths": [
+                    {
+                        "name": "@mui/icons-material",
+                        "message": "Use `import ???Icon from \"@mui/icons-material/???\"` instead."
+                    }
+                ]
+            }
+        ],
+        "@typescript-eslint/no-namespace": "off",
+        "@typescript-eslint/no-empty-interface": "off",
+        "@typescript-eslint/no-empty-function": "off",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-non-null-assertion": "off",
+        "@typescript-eslint/ban-types": [
+            "warn",
+            {
+                "types": {
+                    "{}": false
+                },
+                "extendDefaults": true
+            }
+        ]
+    }
+}

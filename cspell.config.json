@@ -1,0 +1,20 @@
+{
+    "import": ["@cspell/dict-fa-ir/cspell-ext.json"],
+    "language": "en,fa",
+    "words": [
+        "clsx",
+        "gflow",
+        "lcontent",
+        "litems",
+        "lself",
+        "tailwindcss",
+        "utm",
+        "Vazirmatn",
+        "wtext",
+        "xcontent",
+        "xitems",
+        "xself",
+        "zback",
+        "zfront"
+    ]
+}
