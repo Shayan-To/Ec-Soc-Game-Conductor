@@ -24,8 +24,7 @@ export const env = createEnv({
             process.env.VERCEL ? z.string() : z.string().url(),
         ),
         // Add ` on ID and SECRET if you want to make sure they're not empty
-        DISCORD_CLIENT_ID: z.string(),
-        DISCORD_CLIENT_SECRET: z.string(),
+        SMSIR_API_KEY: z.string(),
     },
 
     /**
@@ -46,8 +45,7 @@ export const env = createEnv({
         NODE_ENV: process.env.NODE_ENV,
         NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
         NEXTAUTH_URL: process.env.NEXTAUTH_URL,
-        DISCORD_CLIENT_ID: process.env.DISCORD_CLIENT_ID,
-        DISCORD_CLIENT_SECRET: process.env.DISCORD_CLIENT_SECRET,
+        SMSIR_API_KEY: process.env.SMSIR_API_KEY,
     },
     /**
      * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
