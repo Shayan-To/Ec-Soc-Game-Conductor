@@ -1,17 +1,29 @@
 import { PrismaClient } from "@prisma/client";
+import { createSoftDeleteExtension } from "prisma-extension-soft-delete";
 
 import { env } from "~/env";
 
-const globalForPrisma = globalThis as unknown as {
-    prisma: PrismaClient | undefined;
-};
+console.log(
+    `################################ Initializing db instance #################################################`,
+);
 
-export const db =
-    globalForPrisma.prisma ??
-    new PrismaClient({
-        log: env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
-    });
+export const baseDb = new PrismaClient({
+    log: env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+});
 
-if (env.NODE_ENV !== "production") {
-    globalForPrisma.prisma = db;
+export const db = baseDb.$extends(
+    createSoftDeleteExtension({
+        models: {
+            User: true,
+        },
+        defaultConfig: {
+            field: "deletedAt",
+            createValue: (deleted) => (deleted ? new Date() : null),
+            allowToOneUpdates: true,
+        },
+    }),
+);
+
+if (true || env.NODE_ENV !== "production") {
+    Object.assign(globalThis, { prisma: db });
 }

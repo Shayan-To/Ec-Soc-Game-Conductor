@@ -7,6 +7,7 @@
         "dev": "next dev",
         "start": "next start",
         "build": "next build",
+        "generate": "prisma generate",
         "db:push": "prisma db push",
         "db:studio": "prisma studio",
         "lint": "tsc --noEmit && next lint && yarn prettier:check-all",
@@ -15,7 +16,7 @@
         "prettier": "yarn write-prettier-ignore && prettier",
         "prettier:format-all": "yarn prettier . --write",
         "prettier:check-all": "yarn prettier . --check",
-        "postinstall": "yarn write-prettier-ignore && prisma generate"
+        "postinstall": "yarn write-prettier-ignore && yarn generate"
     },
     "dependencies": {
         "@emotion/css": "^11.11.2",
@@ -39,6 +40,7 @@
         "next": "^14.0.3",
         "next-auth": "^4.24.5",
         "notistack": "^3.0.1",
+        "prisma-extension-soft-delete": "^1.0.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",
         "resize-observer-polyfill": "^1.5.1",
