@@ -256,7 +256,7 @@ function CreateFirm() {
                     const cState = await state.currentState;
                     for (const asset of assets) {
                         if (
-                            costSums[asset] !== cState.firmType![`monthlyCost${capitalize(asset)}`]
+                            mCostSums[asset] !== cState.firmType![`monthlyCost${capitalize(asset)}`]
                         ) {
                             return;
                         }
