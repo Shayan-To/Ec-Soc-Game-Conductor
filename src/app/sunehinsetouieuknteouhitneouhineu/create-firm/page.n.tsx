@@ -236,7 +236,7 @@ function CreateFirm() {
                                                         render();
                                                     }}
                                                     error={
-                                                        costSums[asset] !==
+                                                        mCostSums[asset] !==
                                                         state.firmType![
                                                             `monthlyCost${capitalize(asset)}`
                                                         ]
