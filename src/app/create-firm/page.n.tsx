@@ -226,9 +226,9 @@ function CreateFirm() {
                                         {assets.map((asset, i) => (
                                             <span key={i} className="grow-equally">
                                                 <TextField
-                                                    value={pd[`cost${capitalize(asset)}`]}
+                                                    value={pd[`monthlyCost${capitalize(asset)}`]}
                                                     onChange={({ target }) => {
-                                                        pd[`cost${capitalize(asset)}`] =
+                                                        pd[`monthlyCost${capitalize(asset)}`] =
                                                             +target.value;
                                                         render();
                                                     }}
@@ -248,6 +248,26 @@ function CreateFirm() {
                     ))}
                 </div>
             )}
+            <Button
+                onClick={() => {
+                    for (const asset of assets) {
+                        if (
+                            costSums[asset] !== state.firmType![`monthlyCost${capitalize(asset)}`]
+                        ) {
+                            return;
+                        }
+                        if (costSums[asset] !== state.firmType![`cost${capitalize(asset)}`]) {
+                            return;
+                        }
+                    }
+                    if (shareSum !== 100) {
+                        return;
+                    }
+                    create
+                }}
+            >
+                ایجاد تولدی
+            </Button>
         </div>
     );
 }

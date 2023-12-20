@@ -22,16 +22,17 @@ function CreateFirm() {
         firmType: null as UnArray<typeof firmTypes> | null,
     }));
     const init = api.init.useMutation();
+    const initialExchange = api.initialExchange.useMutation();
     const nextMonth = api.nextMonth.useMutation();
 
     return (
         <div>
             <Button
                 onClick={() => {
-                    init.mutate();
+                    initialExchange.mutate();
                 }}
             >
-                init
+                initialExchange
             </Button>
             <Button
                 onClick={() => {

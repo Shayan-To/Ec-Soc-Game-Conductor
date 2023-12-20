@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { exchangeActions } from "~/base/entities";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 import { setEquals } from "~/utils/collection-utls";
 import { createObjectFromEntries, type UnArray } from "~/utils/type-utils";
@@ -124,6 +125,23 @@ export const appRouter = createTRPCRouter({
         await setTaxUpperBound(ctx.session, "iron", 200);
         //await setInflationCoef(ctx.session, )
         await setEatAmount(ctx.session, 20);
+    }),
+
+    initialExchange: protectedProcedure.mutation(async ({ ctx }) => {
+        const players = await ctx.db.player.findMany();
+        for (const player of players) {
+            await ctx.db.exchange.create({
+                data: applyCreatedBy(ctx.session, {
+                    month: 0,
+                    action: exchangeActions.init,
+                    receiverId: player.id,
+                    receivedCoin: 500,
+                    receivedFood: 200,
+                    receivedLumber: 200,
+                    receivedIron: 100,
+                }),
+            });
+        }
     }),
 
     nextMonth: protectedProcedure.mutation(async ({ ctx }) => {
