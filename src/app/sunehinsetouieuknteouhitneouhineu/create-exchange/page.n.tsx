@@ -8,7 +8,7 @@ import { assets } from "~/base/entities";
 import { useStateRef } from "~/core/hooks";
 import { api } from "~/trpc/react";
 import { UnArray, capitalize, createObjectFromEntries } from "~/utils/type-utils";
-import { assetIcons } from "../icons";
+import { assetIcons } from "../../icons";
 
 export default function CreateFirm2() {
     return (

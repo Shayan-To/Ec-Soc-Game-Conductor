@@ -8,7 +8,7 @@ import { assets } from "~/base/entities";
 import { useStateRef } from "~/core/hooks";
 import { api } from "~/trpc/react";
 import { UnArray, capitalize, createObjectFromEntries } from "~/utils/type-utils";
-import { assetIcons } from "../icons";
+import { assetIcons } from "../../icons";
 
 export default function CreateFirm2() {
     return (
@@ -252,7 +252,7 @@ function CreateFirm() {
                 </div>
             )}
             <Button
-                onClick={() => {
+                onClick={async () => {
                     for (const asset of assets) {
                         if (
                             costSums[asset] !== state.firmType![`monthlyCost${capitalize(asset)}`]
@@ -266,7 +266,7 @@ function CreateFirm() {
                     if (shareSum !== 100) {
                         return;
                     }
-                    create.mutate({
+                    await create.mutateAsync({
                         auth: state.playerData
                             .filter((pd) => pd.enabled)
                             .map((pd) => ({
@@ -284,9 +284,50 @@ function CreateFirm() {
                                 })),
                         },
                     });
+                    location.reload();
                 }}
             >
                 ایجاد تولیدی
+            </Button>
+            <Button
+                onClick={async () => {
+                    await create.mutateAsync({
+                        auth: state.playerData
+                            .filter((pd) => pd.enabled)
+                            .map((pd) => ({
+                                password: "000000",
+                                playerId: pd.player.id,
+                            })),
+                        data: {
+                            typeId: state.firmType?.id!,
+                            ownerships: state.playerData
+                                .filter((pd) => pd.enabled)
+                                .map((pd) => ({
+                                    ...pd,
+                                    ownershipPerc: pd.share,
+                                    playerId: pd.player.id,
+                                })),
+                        },
+                    });
+                    if (!state.firmType) {
+                        return;
+                    }
+                    const players = state.playerData.filter((pd) => pd.enabled);
+                    players.forEach((pd) => {
+                        pd.monthlyCostCoin = state.firmType!.monthlyCostCoin / players.length;
+                        pd.monthlyCostFood = state.firmType!.monthlyCostFood / players.length;
+                        pd.monthlyCostLumber = state.firmType!.monthlyCostLumber / players.length;
+                        pd.monthlyCostIron = state.firmType!.monthlyCostIron / players.length;
+                        pd.payedCoin = state.firmType!.costCoin / players.length;
+                        pd.payedFood = state.firmType!.costFood / players.length;
+                        pd.payedLumber = state.firmType!.costLumber / players.length;
+                        pd.payedIron = state.firmType!.costIron / players.length;
+                        pd.share = 100 / players.length;
+                    });
+                    render();
+                }}
+            >
+                50/50
             </Button>
         </div>
     );
