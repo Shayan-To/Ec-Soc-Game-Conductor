@@ -252,14 +252,15 @@ function CreateFirm() {
                 </div>
             )}
             <Button
-                onClick={() => {
+                onClick={async () => {
+                    const cState = await state.currentState;
                     for (const asset of assets) {
                         if (
-                            costSums[asset] !== state.firmType![`monthlyCost${capitalize(asset)}`]
+                            costSums[asset] !== cState.firmType![`monthlyCost${capitalize(asset)}`]
                         ) {
                             return;
                         }
-                        if (costSums[asset] !== state.firmType![`cost${capitalize(asset)}`]) {
+                        if (costSums[asset] !== cState.firmType![`cost${capitalize(asset)}`]) {
                             return;
                         }
                     }
@@ -267,15 +268,15 @@ function CreateFirm() {
                         return;
                     }
                     create.mutate({
-                        auth: state.playerData
+                        auth: cState.playerData
                             .filter((pd) => pd.enabled)
                             .map((pd) => ({
                                 password: "000000",
                                 playerId: pd.player.id,
                             })),
                         data: {
-                            typeId: state.firmType?.id!,
-                            ownerships: state.playerData
+                            typeId: cState.firmType?.id!,
+                            ownerships: cState.playerData
                                 .filter((pd) => pd.enabled)
                                 .map((pd) => ({
                                     ...pd,

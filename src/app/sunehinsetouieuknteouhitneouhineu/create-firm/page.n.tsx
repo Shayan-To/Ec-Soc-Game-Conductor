@@ -253,13 +253,14 @@ function CreateFirm() {
             )}
             <Button
                 onClick={async () => {
+                    const cState = await state.currentState;
                     for (const asset of assets) {
                         if (
-                            costSums[asset] !== state.firmType![`monthlyCost${capitalize(asset)}`]
+                            costSums[asset] !== cState.firmType![`monthlyCost${capitalize(asset)}`]
                         ) {
                             return;
                         }
-                        if (costSums[asset] !== state.firmType![`cost${capitalize(asset)}`]) {
+                        if (costSums[asset] !== cState.firmType![`cost${capitalize(asset)}`]) {
                             return;
                         }
                     }
@@ -267,15 +268,15 @@ function CreateFirm() {
                         return;
                     }
                     await create.mutateAsync({
-                        auth: state.playerData
+                        auth: cState.playerData
                             .filter((pd) => pd.enabled)
                             .map((pd) => ({
                                 password: "000000",
                                 playerId: pd.player.id,
                             })),
                         data: {
-                            typeId: state.firmType?.id!,
-                            ownerships: state.playerData
+                            typeId: cState.firmType?.id!,
+                            ownerships: cState.playerData
                                 .filter((pd) => pd.enabled)
                                 .map((pd) => ({
                                     ...pd,
@@ -291,19 +292,21 @@ function CreateFirm() {
             </Button>
             <Button
                 onClick={async () => {
-                    if (!state.firmType) {
+                    const cState = await state.currentState;
+                    const firmType = cState.firmType;
+                    if (!firmType) {
                         return;
                     }
-                    const players = state.playerData.filter((pd) => pd.enabled);
+                    const players = cState.playerData.filter((pd) => pd.enabled);
                     players.forEach((pd) => {
-                        pd.monthlyCostCoin = state.firmType!.monthlyCostCoin / players.length;
-                        pd.monthlyCostFood = state.firmType!.monthlyCostFood / players.length;
-                        pd.monthlyCostLumber = state.firmType!.monthlyCostLumber / players.length;
-                        pd.monthlyCostIron = state.firmType!.monthlyCostIron / players.length;
-                        pd.payedCoin = state.firmType!.costCoin / players.length;
-                        pd.payedFood = state.firmType!.costFood / players.length;
-                        pd.payedLumber = state.firmType!.costLumber / players.length;
-                        pd.payedIron = state.firmType!.costIron / players.length;
+                        pd.monthlyCostCoin = firmType.monthlyCostCoin / players.length;
+                        pd.monthlyCostFood = firmType.monthlyCostFood / players.length;
+                        pd.monthlyCostLumber = firmType.monthlyCostLumber / players.length;
+                        pd.monthlyCostIron = firmType.monthlyCostIron / players.length;
+                        pd.payedCoin = firmType.costCoin / players.length;
+                        pd.payedFood = firmType.costFood / players.length;
+                        pd.payedLumber = firmType.costLumber / players.length;
+                        pd.payedIron = firmType.costIron / players.length;
                         pd.share = 100 / players.length;
                     });
                     render();
