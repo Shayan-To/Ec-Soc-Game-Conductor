@@ -291,24 +291,6 @@ function CreateFirm() {
             </Button>
             <Button
                 onClick={async () => {
-                    await create.mutateAsync({
-                        auth: state.playerData
-                            .filter((pd) => pd.enabled)
-                            .map((pd) => ({
-                                password: "000000",
-                                playerId: pd.player.id,
-                            })),
-                        data: {
-                            typeId: state.firmType?.id!,
-                            ownerships: state.playerData
-                                .filter((pd) => pd.enabled)
-                                .map((pd) => ({
-                                    ...pd,
-                                    ownershipPerc: pd.share,
-                                    playerId: pd.player.id,
-                                })),
-                        },
-                    });
                     if (!state.firmType) {
                         return;
                     }
