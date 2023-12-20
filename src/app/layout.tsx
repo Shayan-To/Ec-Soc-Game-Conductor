@@ -1,13 +1,13 @@
 import "~/styles/globals.css";
 
-import { Inter } from "next/font/google";
+import nextFont from "next/font/local";
 import { cookies } from "next/headers";
 
 import { TRPCReactProvider } from "~/trpc/react";
 
-const inter = Inter({
-    subsets: ["latin"],
-    variable: "--font-sans",
+const vazirmatn = nextFont({
+    src: "../../node_modules/vazirmatn/fonts/variable/Vazirmatn[wght].ttf",
+    adjustFontFallback: false,
 });
 
 export const metadata = {
@@ -18,8 +18,8 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     return (
-        <html lang="en">
-            <body className={`font-sans ${inter.variable}`}>
+        <html lang="fa" dir="rtl">
+            <body className={vazirmatn.className}>
                 <TRPCReactProvider cookies={cookies().toString()}>{children}</TRPCReactProvider>
             </body>
         </html>

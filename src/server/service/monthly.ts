@@ -161,7 +161,11 @@ export async function applyTaxes(session: Session) {
 
     for (const player of players) {
         const t = await db.exchange.aggregate({
-            where: { receiverId: player.id, month },
+            where: {
+                receiverId: player.id,
+                month,
+                action: { in: [exchangeActions.firmCost, exchangeActions.firmProduction] },
+            },
             _sum: createObjectFromEntries(
                 assets.map((asset) => [`received${capitalize(asset)}`, true] as const),
             ),
@@ -221,6 +225,22 @@ export async function applyInflation(session: Session) {
     const month = await getMonth();
     const players = await db.player.findMany();
 
+    for (const player of players) {
+        await db.exchange.create({
+            data: applyCreatedBy(session, {
+                month,
+                action: exchangeActions.inflation,
+                receiverId: player.id,
+                ...createObjectFromEntries(
+                    assets.map((asset) => [`received${capitalize(asset)}`, 0] as const),
+                ),
+                receivedCoin: 200,
+            }),
+        });
+    }
+
+    return;
+
     const t = await db.exchange.aggregate({
         where: { senderId: null },
         _sum: createObjectFromEntries(
@@ -277,8 +297,8 @@ export async function applyEating(session: Session) {
 
 export async function nextMonth(session: Session) {
     await incrementMonth(session);
+    await applyEating(session);
     await applyFirmsCostProductions(session);
     await applyTaxes(session);
     await applyInflation(session);
-    await applyEating(session);
 }
