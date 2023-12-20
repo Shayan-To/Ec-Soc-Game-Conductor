@@ -109,8 +109,7 @@ function CreateFirm() {
                                 <span className="grow-equally">تولید</span>
                                 {assets.map((asset, i) => (
                                     <span key={i} className="grow-equally">
-                                        {firmType[`production${capitalize(asset)}Mean`]} {}±
-                                        {firmType[`production${capitalize(asset)}StdDevPerc`]}%
+                                        {firmType[`production${capitalize(asset)}Mean`]}
                                     </span>
                                 ))}
                             </div>
