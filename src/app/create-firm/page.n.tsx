@@ -29,7 +29,7 @@ function CreateFirm() {
             share: 100,
             password: "",
             ...createObjectFromEntries(
-                assets.map((asset) => [`cost${capitalize(asset)}`, 0 as number] as const),
+                assets.map((asset) => [`payed${capitalize(asset)}`, 0 as number] as const),
             ),
             ...createObjectFromEntries(
                 assets.map((asset) => [`monthlyCost${capitalize(asset)}`, 0 as number] as const),
@@ -50,7 +50,7 @@ function CreateFirm() {
                     asset,
                     state.playerData
                         .filter((pd) => pd.enabled)
-                        .reduce((s, pd) => s + pd[`cost${capitalize(asset)}`], 0),
+                        .reduce((s, pd) => s + pd[`payed${capitalize(asset)}`], 0),
                 ] as const,
         ),
     );
@@ -176,7 +176,7 @@ function CreateFirm() {
                                         }}
                                         error={shareSum !== 100}
                                     />
-                                    <TextField
+                                    {/* <TextField
                                         label="رمز"
                                         value={pd.password}
                                         onChange={({ target }) => {
@@ -184,7 +184,7 @@ function CreateFirm() {
                                             render();
                                         }}
                                         type="password"
-                                    />
+                                    /> */}
 
                                     <div className="row">
                                         <span className="grow-equally"></span>
@@ -207,15 +207,19 @@ function CreateFirm() {
                                         {assets.map((asset, i) => (
                                             <span key={i} className="grow-equally">
                                                 <TextField
-                                                    value={pd[`cost${capitalize(asset)}`]}
+                                                    value={pd[`payed${capitalize(asset)}`]}
                                                     onChange={({ target }) => {
-                                                        pd[`cost${capitalize(asset)}`] =
+                                                        pd[`payed${capitalize(asset)}`] =
                                                             +target.value;
                                                         render();
                                                     }}
                                                     error={
                                                         costSums[asset] !==
-                                                        state.firmType![`cost${capitalize(asset)}`]
+                                                            state.firmType![
+                                                                `cost${capitalize(asset)}`
+                                                            ] ||
+                                                        pd[`payed${capitalize(asset)}`] >
+                                                            pd.balance[asset]
                                                     }
                                                 />
                                             </span>
@@ -263,10 +267,27 @@ function CreateFirm() {
                     if (shareSum !== 100) {
                         return;
                     }
-                    create
+                    create.mutate({
+                        auth: state.playerData
+                            .filter((pd) => pd.enabled)
+                            .map((pd) => ({
+                                password: "000000",
+                                playerId: pd.player.id,
+                            })),
+                        data: {
+                            typeId: state.firmType?.id!,
+                            ownerships: state.playerData
+                                .filter((pd) => pd.enabled)
+                                .map((pd) => ({
+                                    ...pd,
+                                    ownershipPerc: pd.share,
+                                    playerId: pd.player.id,
+                                })),
+                        },
+                    });
                 }}
             >
-                ایجاد تولدی
+                ایجاد تولیدی
             </Button>
         </div>
     );
