@@ -1,3 +1,5 @@
+import { type Prisma } from "@prisma/client";
+import { type GetFindResult } from "@prisma/client/runtime/library";
 import { type Session } from "next-auth";
 import random from "random";
 import { assets, exchangeActions, type Asset } from "~/base/entities";
@@ -14,9 +16,14 @@ import {
     incrementMonth,
 } from "./env-config";
 
-export async function applyFirmsMonthly(session: Session) {
+export async function applyFirmsCostProductions(session: Session) {
     const month = await getMonth();
     const levelFactor = await getFirmLevelFactor();
+
+    type Firm = GetFindResult<Prisma.$FirmPayload, { include: { ownerships: true } }>;
+    type FirmCycle = GetFindResult<Prisma.$FirmCyclePayload, null>;
+
+    const producingCycleFirms: { cycle: FirmCycle; firms: Firm[] }[] = [];
 
     const types = await db.firmType.findMany({
         include: { firms: { include: { ownerships: true } } },
@@ -25,10 +32,14 @@ export async function applyFirmsMonthly(session: Session) {
         const productions = {} as { [asset in `${Asset}Production`]: number };
 
         for (const asset of assets) {
-            productions[`${asset}Production`] = random.normal(
-                type[`production${capitalize(asset)}Mean`],
-                type[`production${capitalize(asset)}StdDevPerc`],
-            )();
+            productions[`${asset}Production`] = Math.round(
+                random.normal(
+                    type[`production${capitalize(asset)}Mean`],
+                    (type[`production${capitalize(asset)}Mean`] *
+                        type[`production${capitalize(asset)}StdDevPerc`]) /
+                        100,
+                )(),
+            );
         }
 
         const cycle = await db.firmCycle.create({
@@ -38,6 +49,9 @@ export async function applyFirmsMonthly(session: Session) {
                 ...productions,
             }),
         });
+
+        const producingFirms: Firm[] = [];
+        producingCycleFirms.push({ cycle, firms: producingFirms });
 
         for (const firm of type.firms) {
             if (month < firm.activeFromMonth) {
@@ -90,6 +104,15 @@ export async function applyFirmsMonthly(session: Session) {
                 });
             }
 
+            producingFirms.push(firm);
+        }
+    }
+
+    // First apply all costs, then apply the productions, so production of a firm cannot be used as cost for another.
+
+    for (const { cycle, firms } of producingCycleFirms) {
+        for (const firm of firms) {
+            const factor = Math.pow(levelFactor, firm.level);
             for (const ownership of firm.ownerships) {
                 await db.exchange.create({
                     data: applyCreatedBy(session, {
@@ -102,7 +125,7 @@ export async function applyFirmsMonthly(session: Session) {
                                 (asset) =>
                                     [
                                         `received${capitalize(asset)}`,
-                                        (productions[`${asset}Production`] *
+                                        (cycle[`${asset}Production`] *
                                             factor *
                                             ownership.ownershipPerc) /
                                             100,
@@ -254,7 +277,7 @@ export async function applyEating(session: Session) {
 
 export async function nextMonth(session: Session) {
     await incrementMonth(session);
-    await applyFirmsMonthly(session);
+    await applyFirmsCostProductions(session);
     await applyTaxes(session);
     await applyInflation(session);
     await applyEating(session);

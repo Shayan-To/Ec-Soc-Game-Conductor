@@ -6,7 +6,7 @@ import { capitalize, createObjectFromEntries, type UnArray } from "~/utils/type-
 import { applyCreatedBy } from "../auth";
 import { db } from "../db";
 
-export type EnvConfig = GetFindResult<Prisma.$EnvConfigPayload, any>;
+export type EnvConfig = GetFindResult<Prisma.$EnvConfigPayload, null>;
 
 export const envConfigKeysList = [
     "month",
