@@ -71,6 +71,6 @@ export function applyCreatedBy<T extends object>(
 ): T & { createdById: string } {
     return {
         ...o,
-        createdById: session.user.id,
+        createdById: "000"//session.user.id,
     };
 }
