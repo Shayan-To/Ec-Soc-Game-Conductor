@@ -19,21 +19,19 @@ export default function CreateFirm2() {
 }
 
 function CreateFirm() {
-    const [firmTypes] = api.firmTypes.getAll.useSuspenseQuery();
     const [players] = api.player.getAll.useSuspenseQuery();
 
     useEffect(() => {
-        const t = setInterval(() => location.reload, 5000);
+        const t = setInterval(() => location.reload(), 5000);
         return () => clearInterval(t);
     }, []);
 
     return (
         <div>
-            {players.map((pd, i) => (
+            {players.sort().map((pd, i) => (
                 <Paper key={i} className="margin-a-2">
-                    <span>{pd.player.name}</span>
                     <div className="row">
-                        <span className="grow-equally"></span>
+                        <span className="grow-equally">{pd.player.name}</span>
                         {assets.map((asset, i) => (
                             <span key={i} className="grow-equally">
                                 {assetIcons[asset]}
