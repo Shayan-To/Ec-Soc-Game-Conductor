@@ -299,18 +299,15 @@ function CreateFirm() {
                     }
                     const players = cState.playerData.filter((pd) => pd.enabled);
                     players.forEach((pd) => {
-                        pd.monthlyCostCoin = Math.round(firmType.monthlyCostCoin / players.length);
-                        pd.monthlyCostCoin = Math.round(firmType.monthlyCostCoin / players.length);
-                        pd.monthlyCostFood = Math.round(firmType.monthlyCostFood / players.length);
-                        pd.monthlyCostLumber = Math.round(
-                            firmType.monthlyCostLumber / players.length,
-                        );
-                        pd.monthlyCostIron = Math.round(firmType.monthlyCostIron / players.length);
-                        pd.payedCoin = Math.round(firmType.costCoin / players.length);
-                        pd.payedFood = Math.round(firmType.costFood / players.length);
-                        pd.payedLumber = Math.round(firmType.costLumber / players.length);
-                        pd.payedIron = Math.round(firmType.costIron / players.length);
-                        pd.share = Math.round(100 / players.length);
+                        pd.monthlyCostCoin = firmType.monthlyCostCoin / players.length;
+                        pd.monthlyCostFood = firmType.monthlyCostFood / players.length;
+                        pd.monthlyCostLumber = firmType.monthlyCostLumber / players.length;
+                        pd.monthlyCostIron = firmType.monthlyCostIron / players.length;
+                        pd.payedCoin = firmType.costCoin / players.length;
+                        pd.payedFood = firmType.costFood / players.length;
+                        pd.payedLumber = firmType.costLumber / players.length;
+                        pd.payedIron = firmType.costIron / players.length;
+                        pd.share = 100 / players.length;
                     });
                     render();
                 }}
