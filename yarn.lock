@@ -2157,6 +2157,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@open-draft/deferred-promise@npm:^2.1.0":
+  version: 2.2.0
+  resolution: "@open-draft/deferred-promise@npm:2.2.0"
+  checksum: 288830dcc81daea22063154ba594564e711421828737235821852f8f3deb7896593ffe2ef4f63adfacc9aa71a1417de0fc180384ddf4a1a6670dafd5ea6c5519
+  languageName: node
+  linkType: hard
+
 "@panva/hkdf@npm:^1.0.2":
   version: 1.1.1
   resolution: "@panva/hkdf@npm:1.1.1"
@@ -2847,6 +2854,8 @@ __metadata:
     prettier-plugin-prisma: "npm:^5.0.0"
     prettier-plugin-tailwindcss: "npm:^0.5.7"
     prisma: "npm:^5.6.0"
+    prisma-extension-soft-delete: "npm:^1.0.0"
+    random: "npm:^4.1.0"
     react: "npm:^18.2.0"
     react-dom: "npm:^18.2.0"
     resize-observer-polyfill: "npm:^1.5.1"
@@ -5509,6 +5518,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lodash@npm:^4.17.21":
+  version: 4.17.21
+  resolution: "lodash@npm:4.17.21"
+  checksum: 3ac18e92108d68f88429fcddee609e42cf2b653583d9bac22308815a4cd6b185b89a0ad0d9b0c670c371d9d6b61571a98fee6b36e1db14e52766ca253ed9cba0
+  languageName: node
+  linkType: hard
+
 "loose-envify@npm:^1.1.0, loose-envify@npm:^1.4.0":
   version: 1.4.0
   resolution: "loose-envify@npm:1.4.0"
@@ -6486,6 +6502,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"prisma-extension-nested-operations@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "prisma-extension-nested-operations@npm:1.0.1"
+  dependencies:
+    "@open-draft/deferred-promise": "npm:^2.1.0"
+    lodash: "npm:^4.17.21"
+  peerDependencies:
+    "@prisma/client": "*"
+  checksum: baea67ef1ccb818266764679c92d43c685d737601d3f8bac49551c31c2ecb7bc1f13efbd8d3cfaf11afd4dd19fe505e42f7898f23f863c31ff59bbc1f9be08a2
+  languageName: node
+  linkType: hard
+
+"prisma-extension-soft-delete@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "prisma-extension-soft-delete@npm:1.0.0"
+  dependencies:
+    prisma-extension-nested-operations: "npm:^1.0.1"
+  peerDependencies:
+    "@prisma/client": "*"
+  checksum: 18a59627ab026a5f00477f6fc211005ad0f201b5683a9a8057605f9e80fd4bbf875929c3ea49e510262e989cd78b8db75728ed5dd1a7907b5abc42bd30e0a506
+  languageName: node
+  linkType: hard
+
 "prisma@npm:^5.6.0":
   version: 5.7.0
   resolution: "prisma@npm:5.7.0"
@@ -6553,6 +6592,15 @@ __metadata:
   version: 1.0.1
   resolution: "queue-tick@npm:1.0.1"
   checksum: 4d8fad29aeec917365e2bb4bd8ef9704c7326f2628c32dde934770d61bcf16fc13391ab34b5aa0ba7e18b31d0ca5928317b97e8ff2653b610ae70604c474dbf2
+  languageName: node
+  linkType: hard
+
+"random@npm:^4.1.0":
+  version: 4.1.0
+  resolution: "random@npm:4.1.0"
+  dependencies:
+    seedrandom: "npm:^3.0.5"
+  checksum: b39b0c6055bf1be3eccea5f4863803e2b19be080dee1fca0c68229477d025a8ed6d9347524961998cc2ffc8abccaec6dc4691af1ea0215a16876558cfadba9f9
   languageName: node
   linkType: hard
 
@@ -6919,6 +6967,13 @@ __metadata:
   dependencies:
     loose-envify: "npm:^1.1.0"
   checksum: f4022b95cdc282668643da4850f55fe70c899aa956d11819f196e2ca892271bdb253613e53997852094f9351f7c72d057eea8b28d9b4bcb93bcb1c6d09985c82
+  languageName: node
+  linkType: hard
+
+"seedrandom@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "seedrandom@npm:3.0.5"
+  checksum: c04d9a1c1c28bc1d5737f5fb02291ad56c34d57599034ce4a0e65578a84c3128d81d20d70729e0e32ef57e3c6b914b3751cbba95e9dddbd0212a405b2f921119
   languageName: node
   linkType: hard
 

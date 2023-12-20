@@ -1,13 +1,19 @@
 {
-    "import": ["@cspell/dict-fa-ir/cspell-ext.json"],
+    "import": [
+        "@cspell/dict-fa-ir/cspell-ext.json"
+    ],
     "language": "en,fa",
     "words": [
         "clsx",
+        "coef",
         "gflow",
         "lcontent",
         "litems",
         "lself",
+        "mult",
+        "perc",
         "tailwindcss",
+        "uncapitalize",
         "utm",
         "Vazirmatn",
         "wtext",

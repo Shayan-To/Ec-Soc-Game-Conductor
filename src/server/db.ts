@@ -15,6 +15,14 @@ export const db = baseDb.$extends(
     createSoftDeleteExtension({
         models: {
             User: true,
+            EnvConfig: true,
+            Exchange: true,
+            Firm: true,
+            FirmCycle: true,
+            FirmCycleFail: true,
+            FirmOwnership: true,
+            FirmType: true,
+            Player: true,
         },
         defaultConfig: {
             field: "deletedAt",

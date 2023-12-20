@@ -38,6 +38,8 @@ model Exchange {
 
     month Int
 
+    action String
+
     receiverId  Int
     receiver    Player     @relation("Exchange_receiver", fields: [receiverId], references: [id])
     senderId    Int?
@@ -64,22 +66,26 @@ model FirmType {
 
     name String
 
-    monthlyCostCoin              Int
-    monthlyCostFood              Int
-    monthlyCostLumber            Int
-    monthlyCostIron              Int
-    costCoin                     Int
-    costFood                     Int
-    costLumber                   Int
-    costIron                     Int
-    productionCoinMean           Int
-    productionCoinVariancePerc   Int
-    productionFoodMean           Int
-    productionFoodVariancePerc   Int
-    productionLumberMean         Int
-    productionLumberVariancePerc Int
-    productionIronMean           Int
-    productionIronVariancePerc   Int
+    buildTimeMonths Int
+
+    monthlyCostCoin   Int
+    monthlyCostFood   Int
+    monthlyCostLumber Int
+    monthlyCostIron   Int
+
+    costCoin   Int
+    costFood   Int
+    costLumber Int
+    costIron   Int
+
+    productionCoinMean         Int
+    productionCoinStdDevPerc   Int
+    productionFoodMean         Int
+    productionFoodStdDevPerc   Int
+    productionLumberMean       Int
+    productionLumberStdDevPerc Int
+    productionIronMean         Int
+    productionIronStdDevPerc   Int
 
     firms  Firm[]
     cycles FirmCycle[]
@@ -111,21 +117,49 @@ model FirmCycle {
     deletedAt DateTime?
 
     createdById String
+    failedfirms FirmCycleFail[]
 
     @@index([month])
 }
 
 model Firm {
-    id     Int             @id @default(autoincrement())
+    id Int @id @default(autoincrement())
+
     typeId Int
-    type   FirmType        @relation(fields: [typeId], references: [id])
-    owners FirmOwnership[]
+    type   FirmType @relation(fields: [typeId], references: [id])
+
+    builtAtMonth    Int
+    activeFromMonth Int
+
+    level       Int
+    prevLevelId Int?
+    prevLevel   Firm?  @relation("Firm_prevLevel", fields: [prevLevelId], references: [id])
+    nextLevel   Firm[] @relation("Firm_prevLevel")
+
+    ownerships FirmOwnership[]
+    fails      FirmCycleFail[]
 
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
     deletedAt DateTime?
 
     createdById String
+}
+
+model FirmCycleFail {
+    id Int @id @default(autoincrement())
+
+    firmCycleId Int?
+    firmCycle   FirmCycle? @relation(fields: [firmCycleId], references: [id])
+    firmId      Int
+    firm        Firm       @relation(fields: [firmId], references: [id])
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+
+    createdById   String
+    FirmOwnership FirmOwnership[]
 }
 
 model FirmOwnership {
@@ -147,7 +181,9 @@ model FirmOwnership {
     updatedAt DateTime  @updatedAt
     deletedAt DateTime?
 
-    createdById String
+    createdById     String
+    FirmCycleFail   FirmCycleFail? @relation(fields: [firmCycleFailId], references: [id])
+    firmCycleFailId Int?
 }
 
 model EnvConfig {
@@ -201,6 +237,12 @@ model User {
     features      String    @default("|") @db.Text
     accounts      Account[]
     sessions      Session[]
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    deletedAt DateTime?
+
+    createdById String
 }
 
 model VerificationToken {

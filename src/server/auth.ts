@@ -1,5 +1,10 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { getServerSession, type DefaultSession, type NextAuthOptions } from "next-auth";
+import {
+    getServerSession,
+    type DefaultSession,
+    type NextAuthOptions,
+    type Session,
+} from "next-auth";
 
 import { baseDb } from "~/server/db";
 
@@ -59,3 +64,13 @@ export const authOptions: NextAuthOptions = {
  * @see https://next-auth.js.org/configuration/nextjs
  */
 export const getServerAuthSession = () => getServerSession(authOptions);
+
+export function applyCreatedBy<T extends object>(
+    session: Session,
+    o: T,
+): T & { createdById: string } {
+    return {
+        ...o,
+        createdById: session.user.id,
+    };
+}
