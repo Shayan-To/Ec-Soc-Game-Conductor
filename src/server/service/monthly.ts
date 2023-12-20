@@ -234,7 +234,8 @@ export async function applyInflation(session: Session) {
                 ...createObjectFromEntries(
                     assets.map((asset) => [`received${capitalize(asset)}`, 0] as const),
                 ),
-                receivedCoin: 200,
+                receivedCoin: 2000,
+                receivedLumber: 500,
             }),
         });
     }
