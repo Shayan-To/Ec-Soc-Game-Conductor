@@ -2,13 +2,13 @@
 
 /* eslint-disable react-hooks/rules-of-hooks */
 
-import { Button, Paper, TextField } from "@mui/material";
+import { Paper } from "@mui/material";
 import { Suspense } from "react";
 import { assets } from "~/base/entities";
 import { useStateRef } from "~/core/hooks";
 import { api } from "~/trpc/react";
 import { UnArray, capitalize, createObjectFromEntries } from "~/utils/type-utils";
-import { assetIcons } from "../../icons";
+import { assetIcons } from "../icons";
 
 export default function CreateFirm2() {
     return (
@@ -71,249 +71,27 @@ function CreateFirm() {
 
     return (
         <div>
-            <h1>تولیدی جدید</h1>
-            <div>
-                {state.firmType === null &&
-                    firmTypes.map((firmType, i) => (
-                        <Paper
-                            key={i}
-                            className="margin-a-2"
-                            onClick={() => (state.firmType = firmType)}
-                        >
-                            <span>{firmType.name}</span>
-                            <div className="row">
-                                <span className="grow-equally"></span>
-                                {assets.map((asset, i) => (
-                                    <span key={i} className="grow-equally">
-                                        {assetIcons[asset]}
-                                    </span>
-                                ))}
-                            </div>
-                            <div className="row">
-                                <span className="grow-equally">ساخت</span>
-                                {assets.map((asset, i) => (
-                                    <span key={i} className="grow-equally">
-                                        {firmType[`cost${capitalize(asset)}`]}
-                                    </span>
-                                ))}
-                            </div>
-                            <div className="row">
-                                <span className="grow-equally">ماهانه</span>
-                                {assets.map((asset, i) => (
-                                    <span key={i} className="grow-equally">
-                                        {firmType[`monthlyCost${capitalize(asset)}`]}
-                                    </span>
-                                ))}
-                            </div>
-                            <div className="row">
-                                <span className="grow-equally">تولید</span>
-                                {assets.map((asset, i) => (
-                                    <span key={i} className="grow-equally">
-                                        {firmType[`production${capitalize(asset)}Mean`]}
-                                    </span>
-                                ))}
-                            </div>
-                        </Paper>
-                    ))}
-            </div>
-            {state.firmType !== null && (
-                <div>
-                    <Paper className="margin-a-2">
-                        <span>{state.firmType.name}</span>
-                        <div className="row">
-                            <span className="grow-equally"></span>
-                            {assets.map((asset, i) => (
-                                <span key={i} className="grow-equally">
-                                    {assetIcons[asset]}
-                                </span>
-                            ))}
-                        </div>
-                        <div className="row">
-                            <span className="grow-equally">ساخت</span>
-                            {assets.map((asset, i) => (
-                                <span key={i} className="grow-equally">
-                                    {costSums[asset]} /{" "}
-                                    {state.firmType![`cost${capitalize(asset)}`]}
-                                </span>
-                            ))}
-                        </div>
-                        <div className="row">
-                            <span className="grow-equally">ماهانه</span>
-                            {assets.map((asset, i) => (
-                                <span key={i} className="grow-equally">
-                                    {mCostSums[asset]} /{" "}
-                                    {state.firmType![`monthlyCost${capitalize(asset)}`]}
-                                </span>
-                            ))}
-                        </div>
-                        <div className="row">{shareSum}% / 100%</div>
-                    </Paper>
-
-                    {state.playerData.map((pd, i) => (
-                        <Paper
-                            key={i}
-                            className="margin-a-2"
-                            style={{ background: pd.enabled ? "white" : "grey" }}
-                        >
-                            <span>{pd.player.name}</span>
-                            <Button
-                                onClick={() => {
-                                    pd.enabled = !pd.enabled;
-                                    render();
-                                }}
-                            >
-                                فعال / غیر فعال
-                            </Button>
-                            {pd.enabled && (
-                                <>
-                                    <TextField
-                                        label="درصد شراکت"
-                                        value={pd.share}
-                                        onChange={({ target }) => {
-                                            pd.share = +target.value;
-                                            render();
-                                        }}
-                                        error={shareSum !== 100}
-                                    />
-                                    {/* <TextField
-                                        label="رمز"
-                                        value={pd.password}
-                                        onChange={({ target }) => {
-                                            pd.password = target.value;
-                                            render();
-                                        }}
-                                        type="password"
-                                    /> */}
-
-                                    <div className="row">
-                                        <span className="grow-equally"></span>
-                                        {assets.map((asset, i) => (
-                                            <span key={i} className="grow-equally">
-                                                {assetIcons[asset]}
-                                            </span>
-                                        ))}
-                                    </div>
-                                    <div className="row">
-                                        <span className="grow-equally">موجودی</span>
-                                        {assets.map((asset, i) => (
-                                            <span key={i} className="grow-equally">
-                                                {pd.balance[asset]}
-                                            </span>
-                                        ))}
-                                    </div>
-                                    <div className="row">
-                                        <span className="grow-equally">هزینه‌ی پرداختی</span>
-                                        {assets.map((asset, i) => (
-                                            <span key={i} className="grow-equally">
-                                                <TextField
-                                                    value={pd[`payed${capitalize(asset)}`]}
-                                                    onChange={({ target }) => {
-                                                        pd[`payed${capitalize(asset)}`] =
-                                                            +target.value;
-                                                        render();
-                                                    }}
-                                                    error={
-                                                        costSums[asset] !==
-                                                            state.firmType![
-                                                                `cost${capitalize(asset)}`
-                                                            ] ||
-                                                        pd[`payed${capitalize(asset)}`] >
-                                                            pd.balance[asset]
-                                                    }
-                                                />
-                                            </span>
-                                        ))}
-                                    </div>
-                                    <div className="row">
-                                        <span className="grow-equally">هزینه‌ی ماهانه</span>
-                                        {assets.map((asset, i) => (
-                                            <span key={i} className="grow-equally">
-                                                <TextField
-                                                    value={pd[`monthlyCost${capitalize(asset)}`]}
-                                                    onChange={({ target }) => {
-                                                        pd[`monthlyCost${capitalize(asset)}`] =
-                                                            +target.value;
-                                                        render();
-                                                    }}
-                                                    error={
-                                                        mCostSums[asset] !==
-                                                        state.firmType![
-                                                            `monthlyCost${capitalize(asset)}`
-                                                        ]
-                                                    }
-                                                />
-                                            </span>
-                                        ))}
-                                    </div>
-                                </>
-                            )}
-                        </Paper>
-                    ))}
-                </div>
-            )}
-            <Button
-                onClick={async () => {
-                    const cState = await state.currentState;
-                    for (const asset of assets) {
-                        if (
-                            mCostSums[asset] !== cState.firmType![`monthlyCost${capitalize(asset)}`]
-                        ) {
-                            return;
-                        }
-                        if (costSums[asset] !== cState.firmType![`cost${capitalize(asset)}`]) {
-                            return;
-                        }
-                    }
-                    if (shareSum !== 100) {
-                        return;
-                    }
-                    await create.mutateAsync({
-                        auth: cState.playerData
-                            .filter((pd) => pd.enabled)
-                            .map((pd) => ({
-                                password: "000000",
-                                playerId: pd.player.id,
-                            })),
-                        data: {
-                            typeId: cState.firmType?.id!,
-                            ownerships: cState.playerData
-                                .filter((pd) => pd.enabled)
-                                .map((pd) => ({
-                                    ...pd,
-                                    ownershipPerc: pd.share,
-                                    playerId: pd.player.id,
-                                })),
-                        },
-                    });
-                    location.reload();
-                }}
-            >
-                ایجاد تولیدی
-            </Button>
-            <Button
-                onClick={async () => {
-                    const cState = await state.currentState;
-                    const firmType = cState.firmType;
-                    if (!firmType) {
-                        return;
-                    }
-                    const players = cState.playerData.filter((pd) => pd.enabled);
-                    players.forEach((pd) => {
-                        pd.monthlyCostCoin = firmType.monthlyCostCoin / players.length;
-                        pd.monthlyCostFood = firmType.monthlyCostFood / players.length;
-                        pd.monthlyCostLumber = firmType.monthlyCostLumber / players.length;
-                        pd.monthlyCostIron = firmType.monthlyCostIron / players.length;
-                        pd.payedCoin = firmType.costCoin / players.length;
-                        pd.payedFood = firmType.costFood / players.length;
-                        pd.payedLumber = firmType.costLumber / players.length;
-                        pd.payedIron = firmType.costIron / players.length;
-                        pd.share = 100 / players.length;
-                    });
-                    render();
-                }}
-            >
-                50/50
-            </Button>
+            {players.map((pd, i) => (
+                <Paper key={i} className="margin-a-2">
+                    <span>{pd.player.name}</span>
+                    <div className="row">
+                        <span className="grow-equally"></span>
+                        {assets.map((asset, i) => (
+                            <span key={i} className="grow-equally">
+                                {assetIcons[asset]}
+                            </span>
+                        ))}
+                    </div>
+                    <div className="row">
+                        <span className="grow-equally">موجودی</span>
+                        {assets.map((asset, i) => (
+                            <span key={i} className="grow-equally">
+                                {pd.balance[asset]}
+                            </span>
+                        ))}
+                    </div>
+                </Paper>
+            ))}
         </div>
     );
 }
