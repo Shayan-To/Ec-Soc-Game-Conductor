@@ -155,6 +155,8 @@ export const appRouter = createTRPCRouter({
                 players.map(async (player) => ({
                     player,
                     balance: await getBalance(player.id),
+                    // firms: ctx.db.firm.findMany({where: {ownerships}})
+                    // ironProduction: db.
                 })),
             );
         }),
