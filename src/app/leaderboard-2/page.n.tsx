@@ -46,13 +46,6 @@ function CreateFirm() {
                             </span>
                         ))}
                     </div>
-                    <div>
-                        {pd.firms.map((firm, i) => (
-                        <div key={i}>
-                            {firm.type.name}
-                        </div>
-                            ))}
-                    </div>
                 </Paper>
             ))}
         </div>
