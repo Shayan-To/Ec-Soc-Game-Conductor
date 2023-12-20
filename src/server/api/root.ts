@@ -32,7 +32,7 @@ export const appRouter = createTRPCRouter({
             productionIronStdDevPerc: 25,
         };
         await ctx.db.firmType.create({
-            data: applyCreatedBy(ctx.session, {
+            data: applyCreatedBy(ctx.session ?? { user: { id: "000" }, expires: "" }, {
                 name: "مزرعه",
                 costCoin: 800,
                 costFood: 70,
@@ -49,7 +49,7 @@ export const appRouter = createTRPCRouter({
             }),
         });
         await ctx.db.firmType.create({
-            data: applyCreatedBy(ctx.session, {
+            data: applyCreatedBy(ctx.session ?? { user: { id: "000" }, expires: "" }, {
                 name: "باغ",
                 costCoin: 1000,
                 costFood: 170,
@@ -66,7 +66,7 @@ export const appRouter = createTRPCRouter({
             }),
         });
         await ctx.db.firmType.create({
-            data: applyCreatedBy(ctx.session, {
+            data: applyCreatedBy(ctx.session ?? { user: { id: "000" }, expires: "" }, {
                 name: "معدن",
                 costCoin: 2000,
                 costFood: 200,
@@ -83,7 +83,7 @@ export const appRouter = createTRPCRouter({
             }),
         });
         await ctx.db.firmType.create({
-            data: applyCreatedBy(ctx.session, {
+            data: applyCreatedBy(ctx.session ?? { user: { id: "000" }, expires: "" }, {
                 name: "کارخونه",
                 costCoin: 2000,
                 costFood: 400,
@@ -100,7 +100,7 @@ export const appRouter = createTRPCRouter({
             }),
         });
         await ctx.db.firmType.create({
-            data: applyCreatedBy(ctx.session, {
+            data: applyCreatedBy(ctx.session ?? { user: { id: "000" }, expires: "" }, {
                 name: "مکانیزه",
                 costCoin: 2000,
                 costFood: 600,
@@ -117,21 +117,21 @@ export const appRouter = createTRPCRouter({
             }),
         });
 
-        await setFirmLevelFactor(ctx.session, 1.2);
-        await setFirmMaxLevel(ctx.session, 2);
-        await setTaxUpperBound(ctx.session, "coin", 100000);
-        await setTaxUpperBound(ctx.session, "food", 500);
-        await setTaxUpperBound(ctx.session, "lumber", 150);
-        await setTaxUpperBound(ctx.session, "iron", 200);
-        //await setInflationCoef(ctx.session, )
-        await setEatAmount(ctx.session, 20);
+        await setFirmLevelFactor(ctx.session ?? { user: { id: "000" }, expires: "" }, 1.2);
+        await setFirmMaxLevel(ctx.session ?? { user: { id: "000" }, expires: "" }, 2);
+        await setTaxUpperBound(ctx.session ?? { user: { id: "000" }, expires: "" }, "coin", 100000);
+        await setTaxUpperBound(ctx.session ?? { user: { id: "000" }, expires: "" }, "food", 500);
+        await setTaxUpperBound(ctx.session ?? { user: { id: "000" }, expires: "" }, "lumber", 150);
+        await setTaxUpperBound(ctx.session ?? { user: { id: "000" }, expires: "" }, "iron", 200);
+        //await setInflationCoef(ctx.session ?? {user: {id: "000"}}, expires: '', )
+        await setEatAmount(ctx.session ?? { user: { id: "000" }, expires: "" }, 20);
     }),
 
     initialExchange: publicProcedure.mutation(async ({ ctx }) => {
         const players = await ctx.db.player.findMany();
         for (const player of players) {
             await ctx.db.exchange.create({
-                data: applyCreatedBy(ctx.session, {
+                data: applyCreatedBy(ctx.session ?? { user: { id: "000" }, expires: "" }, {
                     month: 0,
                     action: exchangeActions.init,
                     receiverId: player.id,
@@ -145,7 +145,7 @@ export const appRouter = createTRPCRouter({
     }),
 
     nextMonth: publicProcedure.mutation(async ({ ctx }) => {
-        await nextMonth(ctx.session);
+        await nextMonth(ctx.session ?? { user: { id: "000" }, expires: "" });
     }),
 
     player: createTRPCRouter({
@@ -221,7 +221,10 @@ export const appRouter = createTRPCRouter({
                 if (!(await authenticatePlayers(input.auth))) {
                     throw new Error(`Invalid auth.`);
                 }
-                return await createFirm(ctx.session, input.data);
+                return await createFirm(
+                    ctx.session ?? { user: { id: "000" }, expires: "" },
+                    input.data,
+                );
             }),
 
         upgrade: publicProcedure
@@ -243,7 +246,10 @@ export const appRouter = createTRPCRouter({
                 if (!(await authenticatePlayers(input.auth))) {
                     throw new Error(`Invalid auth.`);
                 }
-                return await upgradeFirm(ctx.session, input.data);
+                return await upgradeFirm(
+                    ctx.session ?? { user: { id: "000" }, expires: "" },
+                    input.data,
+                );
             }),
     }),
 
@@ -267,7 +273,10 @@ export const appRouter = createTRPCRouter({
                 if (!(await authenticatePlayers(input.auth))) {
                     throw new Error(`Invalid auth.`);
                 }
-                return await createTransferExchange(ctx.session, input.data);
+                return await createTransferExchange(
+                    ctx.session ?? { user: { id: "000" }, expires: "" },
+                    input.data,
+                );
             }),
     }),
 });
