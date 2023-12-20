@@ -29,7 +29,7 @@ function CreateFirm() {
     return (
         <div>
             {players.sort().map((pd, i) => (
-                <Paper key={i} className="margin-a-2">
+                <Paper key={i} className="margin-t-1">
                     <div className="row">
                         <span className="grow-equally">{pd.player.name}</span>
                         {assets.map((asset, i) => (
