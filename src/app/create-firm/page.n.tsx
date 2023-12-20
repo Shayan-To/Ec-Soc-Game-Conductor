@@ -2,7 +2,7 @@
 
 /* eslint-disable react-hooks/rules-of-hooks */
 
-import { Paper, TextField } from "@mui/material";
+import { Button, Paper, TextField } from "@mui/material";
 import { Suspense } from "react";
 import { assets } from "~/base/entities";
 import { useStateRef } from "~/core/hooks";
@@ -27,6 +27,7 @@ function CreateFirm() {
             ...player,
             enabled: false,
             share: 100,
+            password: "",
             ...createObjectFromEntries(
                 assets.map((asset) => [`cost${capitalize(asset)}`, 0 as number] as const),
             ),
@@ -65,6 +66,8 @@ function CreateFirm() {
                 ] as const,
         ),
     );
+
+    const shareSum = state.playerData.filter((pd) => pd.enabled).reduce((s, pd) => s + pd.share, 0);
 
     return (
         <div>
@@ -150,65 +153,94 @@ function CreateFirm() {
                         <Paper
                             key={i}
                             className="margin-a-2"
-                            onClick={() => {
-                                pd.enabled = !pd.enabled;
-                                render();
-                            }}
                             style={{ background: pd.enabled ? "white" : "grey" }}
                         >
                             <span>{pd.player.name}</span>
-                            <div className="row">
-                                <span className="grow-equally"></span>
-                                {assets.map((asset, i) => (
-                                    <span key={i} className="grow-equally">
-                                        {assetIcons[asset]}
-                                    </span>
-                                ))}
-                            </div>
-                            <div className="row">
-                                <span className="grow-equally">موجودی</span>
-                                {assets.map((asset, i) => (
-                                    <span key={i} className="grow-equally">
-                                        {pd.balance[asset]}
-                                    </span>
-                                ))}
-                            </div>
-                            <div className="row">
-                                <span className="grow-equally">هزینه‌ی پرداختی</span>
-                                {assets.map((asset, i) => (
-                                    <span key={i} className="grow-equally">
-                                        <TextField
-                                            value={pd[`cost${capitalize(asset)}`]}
-                                            onChange={({ target }) => {
-                                                pd[`cost${capitalize(asset)}`] = +target.value;
-                                                render();
-                                            }}
-                                            error={
-                                                costSums[asset] !==
-                                                state.firmType![`cost${capitalize(asset)}`]
-                                            }
-                                        />
-                                    </span>
-                                ))}
-                            </div>
-                            <div className="row">
-                                <span className="grow-equally">هزینه‌ی ماهانه</span>
-                                {assets.map((asset, i) => (
-                                    <span key={i} className="grow-equally">
-                                        <TextField
-                                            value={pd[`cost${capitalize(asset)}`]}
-                                            onChange={({ target }) => {
-                                                pd[`cost${capitalize(asset)}`] = +target.value;
-                                                render();
-                                            }}
-                                            error={
-                                                costSums[asset] !==
-                                                state.firmType![`monthlyCost${capitalize(asset)}`]
-                                            }
-                                        />
-                                    </span>
-                                ))}
-                            </div>
+                            <Button
+                                onClick={() => {
+                                    pd.enabled = !pd.enabled;
+                                    render();
+                                }}
+                            >
+                                فعال / غیر فعال
+                            </Button>
+                            {pd.enabled && (
+                                <>
+                                    <TextField
+                                        value={pd.share}
+                                        onChange={({ target }) => {
+                                            pd.share = +target.value;
+                                            render();
+                                        }}
+                                        error={shareSum !== 100}
+                                    />
+                                    <TextField
+                                        value={pd.password}
+                                        onChange={({ target }) => {
+                                            pd.password = target.value;
+                                            render();
+                                        }}
+                                        type="password"
+                                    />
+
+                                    <div className="row">
+                                        <span className="grow-equally"></span>
+                                        {assets.map((asset, i) => (
+                                            <span key={i} className="grow-equally">
+                                                {assetIcons[asset]}
+                                            </span>
+                                        ))}
+                                    </div>
+                                    <div className="row">
+                                        <span className="grow-equally">موجودی</span>
+                                        {assets.map((asset, i) => (
+                                            <span key={i} className="grow-equally">
+                                                {pd.balance[asset]}
+                                            </span>
+                                        ))}
+                                    </div>
+                                    <div className="row">
+                                        <span className="grow-equally">هزینه‌ی پرداختی</span>
+                                        {assets.map((asset, i) => (
+                                            <span key={i} className="grow-equally">
+                                                <TextField
+                                                    value={pd[`cost${capitalize(asset)}`]}
+                                                    onChange={({ target }) => {
+                                                        pd[`cost${capitalize(asset)}`] =
+                                                            +target.value;
+                                                        render();
+                                                    }}
+                                                    error={
+                                                        costSums[asset] !==
+                                                        state.firmType![`cost${capitalize(asset)}`]
+                                                    }
+                                                />
+                                            </span>
+                                        ))}
+                                    </div>
+                                    <div className="row">
+                                        <span className="grow-equally">هزینه‌ی ماهانه</span>
+                                        {assets.map((asset, i) => (
+                                            <span key={i} className="grow-equally">
+                                                <TextField
+                                                    value={pd[`cost${capitalize(asset)}`]}
+                                                    onChange={({ target }) => {
+                                                        pd[`cost${capitalize(asset)}`] =
+                                                            +target.value;
+                                                        render();
+                                                    }}
+                                                    error={
+                                                        costSums[asset] !==
+                                                        state.firmType![
+                                                            `monthlyCost${capitalize(asset)}`
+                                                        ]
+                                                    }
+                                                />
+                                            </span>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
                         </Paper>
                     ))}
                 </div>

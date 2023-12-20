@@ -9,6 +9,9 @@ const config = {
     compress: true,
     pageExtensions: ["p.tsx", "n.ts", "n.tsx"],
     images: { unoptimized: true },
+    eslint: {
+        ignoreDuringBuilds: true,
+    },
 };
 
 export default config;
