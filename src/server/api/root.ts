@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { exchangeActions } from "~/base/entities";
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
+import { createTRPCRouter, publicProcedure, publicProcedure } from "~/server/api/trpc";
 import { setEquals } from "~/utils/collection-utls";
 import { createObjectFromEntries, type UnArray } from "~/utils/type-utils";
 import { applyCreatedBy } from "../auth";
@@ -22,7 +22,7 @@ import { authenticatePlayerInputZod, authenticatePlayers } from "../service/play
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
-    init: protectedProcedure.mutation(async ({ ctx }) => {
+    init: publicProcedure.mutation(async ({ ctx }) => {
         const def = {
             monthlyCostCoin: 0,
             productionCoinMean: 0,
@@ -127,7 +127,7 @@ export const appRouter = createTRPCRouter({
         await setEatAmount(ctx.session, 20);
     }),
 
-    initialExchange: protectedProcedure.mutation(async ({ ctx }) => {
+    initialExchange: publicProcedure.mutation(async ({ ctx }) => {
         const players = await ctx.db.player.findMany();
         for (const player of players) {
             await ctx.db.exchange.create({
@@ -144,7 +144,7 @@ export const appRouter = createTRPCRouter({
         }
     }),
 
-    nextMonth: protectedProcedure.mutation(async ({ ctx }) => {
+    nextMonth: publicProcedure.mutation(async ({ ctx }) => {
         await nextMonth(ctx.session);
     }),
 
@@ -202,7 +202,7 @@ export const appRouter = createTRPCRouter({
             return Object.values(firms);
         }),
 
-        create: protectedProcedure
+        create: publicProcedure
             .input(
                 z.object({
                     auth: authenticatePlayerInputZod.array(),
@@ -224,7 +224,7 @@ export const appRouter = createTRPCRouter({
                 return await createFirm(ctx.session, input.data);
             }),
 
-        upgrade: protectedProcedure
+        upgrade: publicProcedure
             .input(
                 z.object({
                     auth: authenticatePlayerInputZod.array(),
@@ -248,7 +248,7 @@ export const appRouter = createTRPCRouter({
     }),
 
     exchange: createTRPCRouter({
-        createTransfer: protectedProcedure
+        createTransfer: publicProcedure
             .input(
                 z.object({
                     auth: authenticatePlayerInputZod.array(),
