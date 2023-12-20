@@ -1,0 +1,428 @@
+@use "sass:math";
+@use "./tools";
+
+.ltr {
+    direction: ltr;
+}
+
+.rtl {
+    direction: rtl;
+}
+
+div,
+form {
+    @extend .column;
+}
+
+span {
+    @extend .row;
+    @extend .xitems-baseline;
+}
+
+.hidden.hidden.hidden {
+    display: none;
+}
+
+.block {
+    display: block;
+
+    > * {
+        display: inline-flex;
+    }
+}
+
+.inline-block {
+    display: inline-block;
+
+    > * {
+        display: inline-flex;
+    }
+}
+
+.relative {
+    position: relative;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.sticky {
+    position: sticky;
+}
+
+.absolute-fill {
+    position: absolute;
+    inset: 0;
+}
+
+.row,
+.column {
+    display: flex;
+}
+
+.row {
+    flex-direction: row;
+
+    &-reverse {
+        flex-direction: row-reverse;
+    }
+}
+
+.column {
+    flex-direction: column;
+
+    &-reverse {
+        flex-direction: column-reverse;
+    }
+}
+
+.wrap {
+    flex-wrap: wrap;
+
+    &-reverse {
+        flex-wrap: wrap-reverse;
+    }
+}
+
+.no-wrap {
+    flex-wrap: nowrap;
+}
+
+$grid-count-max: 5;
+
+.grid {
+    @for $i from 1 through $grid-count-max {
+        &-rows-#{$i} {
+            display: grid;
+            grid-template-rows: repeat($i, auto);
+        }
+    }
+
+    @for $i from 1 through $grid-count-max {
+        &-cols-#{$i} {
+            display: grid;
+            grid-template-columns: repeat($i, auto);
+        }
+    }
+}
+
+.row {
+    @for $i from 1 through $grid-count-max {
+        &-#{i} {
+            grid-row: $i;
+
+            @for $sp from 1 through ($grid-count-max - $i + 1) {
+                &-#{$sp} {
+                    grid-row: $i / span $sp;
+                }
+            }
+        }
+    }
+}
+
+.col {
+    @for $i from 1 through $grid-count-max {
+        &-#{i} {
+            grid-column: $i;
+
+            @for $sp from 1 through ($grid-count-max - $i + 1) {
+                &-#{$sp} {
+                    grid-column: $i / span $sp;
+                }
+            }
+        }
+    }
+}
+
+.gflow {
+    &-row {
+        grid-auto-flow: row;
+
+        &-dense {
+            grid-auto-flow: row dense;
+        }
+    }
+
+    &-column {
+        grid-auto-flow: column;
+
+        &-dense {
+            grid-auto-flow: column dense;
+        }
+    }
+}
+
+.xcontent {
+    &-start {
+        align-content: flex-start;
+    }
+    &-center {
+        align-content: center;
+    }
+    &-end {
+        align-content: flex-end;
+    }
+    &-stretch {
+        align-content: stretch;
+    }
+    &-around {
+        align-content: space-around;
+    }
+    &-between {
+        align-content: space-between;
+    }
+    &-evenly {
+        align-content: space-evenly;
+    }
+}
+
+.lcontent {
+    &-start {
+        justify-content: flex-start;
+    }
+    &-center {
+        justify-content: center;
+    }
+    &-end {
+        justify-content: flex-end;
+    }
+    &-stretch {
+        justify-content: stretch;
+    }
+    &-around {
+        justify-content: space-around;
+    }
+    &-between {
+        justify-content: space-between;
+    }
+    &-evenly {
+        justify-content: space-evenly;
+    }
+}
+
+.xitems {
+    &-start {
+        align-items: flex-start;
+    }
+    &-center {
+        align-items: center;
+    }
+    &-end {
+        align-items: flex-end;
+    }
+    &-stretch {
+        align-items: stretch;
+    }
+    &-baseline {
+        align-items: baseline;
+    }
+}
+
+.litems {
+    &-start {
+        justify-items: flex-start;
+    }
+    &-center {
+        justify-items: center;
+    }
+    &-end {
+        justify-items: flex-end;
+    }
+    &-stretch {
+        justify-items: stretch;
+    }
+    &-baseline {
+        justify-items: baseline;
+    }
+}
+
+.xself {
+    &-start {
+        align-self: flex-start;
+    }
+    &-center {
+        align-self: center;
+    }
+    &-end {
+        align-self: flex-end;
+    }
+    &-stretch {
+        align-self: stretch;
+    }
+    &-baseline {
+        align-self: baseline;
+    }
+}
+
+.lself {
+    &-start {
+        justify-self: flex-start;
+    }
+    &-center {
+        justify-self: center;
+    }
+    &-end {
+        justify-self: flex-end;
+    }
+    &-stretch {
+        justify-self: stretch;
+    }
+    &-baseline {
+        justify-self: baseline;
+    }
+}
+
+.text {
+    &-start {
+        text-align: start;
+    }
+    &-center {
+        text-align: center;
+    }
+    &-end {
+        text-align: end;
+    }
+    &-justify {
+        text-align: justify;
+    }
+}
+
+.text-no-wrap {
+    white-space: nowrap;
+}
+
+$spacing-factor: 1.5;
+
+@each $f in z, 0, 1, 2, 3, 4, 5, 6, 7 {
+    $space: 0;
+    @if $f != "z" {
+        $space: math.pow($spacing-factor, $f - 1) * 0.5em;
+    }
+    @if $f == 0 {
+        $f: p5;
+    }
+    @if $f == "z" {
+        $f: 0;
+    }
+
+    .gap-rc-#{$f},
+    .gap-r-#{$f} {
+        row-gap: $space;
+    }
+    .gap-rc-#{$f},
+    .gap-c-#{$f} {
+        column-gap: $space;
+    }
+
+    @each $spacing in margin, padding {
+        .#{$spacing} {
+            &-a-#{$f},
+            &-se-#{$f},
+            &-s-#{$f} {
+                #{$spacing}-inline-start: $space;
+            }
+            &-a-#{$f},
+            &-se-#{$f},
+            &-e-#{$f} {
+                #{$spacing}-inline-end: $space;
+            }
+            &-a-#{$f},
+            &-tb-#{$f},
+            &-t-#{$f} {
+                #{$spacing}-block-start: $space;
+            }
+            &-a-#{$f},
+            &-tb-#{$f},
+            &-b-#{$f} {
+                #{$spacing}-block-end: $space;
+            }
+        }
+    }
+}
+
+$large-factor: 1.33;
+
+@for $f from 0 through 7 {
+    .large-#{$f} {
+        font-size: math.pow($large-factor, $f) * 1em;
+    }
+}
+
+.large-p5 {
+    font-size: math.pow($large-factor, 0.5) * 1em;
+}
+
+$small-factor: 0.9;
+
+@for $f from 0 through 7 {
+    .small-#{$f} {
+        font-size: math.pow($small-factor, $f) * 1em;
+    }
+}
+
+@for $w from 1 through 9 {
+    $w: $w - 4;
+    @if $w <= 0 {
+        .light-#{-$w} {
+            font-weight: ($w + 4) * 100;
+        }
+    }
+    @if $w >= 0 {
+        .bold-#{$w} {
+            font-weight: ($w + 4) * 100;
+        }
+    }
+}
+
+@each $z in 0, 10, 20, 30, 40, 50, 100, 1000 {
+    .zback-#{$z} {
+        z-index: -$z;
+    }
+    .zfront-#{$z} {
+        z-index: $z;
+    }
+}
+
+@each $g in 0, p1, p5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 25, 50, 100 {
+    $v: $g;
+    @if ($g == "p1") {
+        $v: 0.1;
+    }
+    @if ($g == "p5") {
+        $v: 0.5;
+    }
+    .grow-#{$g} {
+        flex-grow: $v;
+    }
+    .shrink-#{$g} {
+        flex-shrink: $v;
+    }
+}
+
+.no-basis {
+    flex-basis: 0;
+}
+
+.no-shrink {
+    @extend .shrink-0;
+}
+
+.grow {
+    @extend .grow-1;
+}
+
+.grow-equally {
+    flex: 1;
+}
+
+@each $v in auto, hidden, scroll, visible, clip {
+    .overflow-xy-#{$v},
+    .overflow-x-#{$v} {
+        overflow-x: $v;
+    }
+    .overflow-xy-#{$v},
+    .overflow-y-#{$v} {
+        overflow-y: $v;
+    }
+}

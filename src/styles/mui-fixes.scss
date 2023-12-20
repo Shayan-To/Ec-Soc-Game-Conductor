@@ -1,0 +1,72 @@
+.MuiInputBase-root,
+.MuiToolbar-root,
+.MuiAlert-root,
+.MuiAlert-action,
+.MuiListItemButton-root,
+.MuiAccordionSummary-root,
+.MuiButton-root,
+.MuiButtonGroup-root,
+.MuiTabs-root,
+.MuiTabs-flexContainer,
+.SnackbarItem-contentRoot,
+.SnackbarItem-message {
+    flex-direction: row;
+}
+
+.MuiTabs-vertical,
+.MuiTabs-flexContainerVertical {
+    flex-direction: column;
+}
+
+.MuiAlert-message {
+    flex-grow: 1;
+    justify-content: center;
+}
+
+.MuiAlert-icon {
+    padding: 10px 0;
+}
+
+.MuiAppBar-root {
+    width: unset;
+}
+
+.MuiToolbar-root {
+    min-height: 3.5em;
+}
+
+.MuiDialogActions-root {
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+}
+
+.MuiButton-root,
+.MuiTooltip-tooltip {
+    text-align: center;
+}
+
+.MuiDialogTitle-root + .MuiDialogContent-root {
+    padding-top: 10px;
+}
+
+.MuiDialogActions-root {
+    padding: 8px 16px 16px;
+}
+
+.MuiTabPanel-root[hidden] {
+    display: none;
+}
+
+.l-tab .MuiTabs-indicator {
+    display: none;
+}
+.l-tab .MuiTabs-flexContainer {
+    background: black;
+    margin: 1em;
+    overflow: hidden;
+    padding: 0em;
+}
+.l-tab .Mui-selected {
+    margin: 6px;
+    padding: 0em;
+}

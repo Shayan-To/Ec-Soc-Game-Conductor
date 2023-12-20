@@ -1,0 +1,11 @@
+// sanitize.css
+@import "~sanitize.css";
+@import "~sanitize.css/forms.css";
+
+// app
+
+@import "./tailwind.css";
+@import "./flex";
+@import "./globals";
+@import "./utils";
+@import "./mui-fixes";

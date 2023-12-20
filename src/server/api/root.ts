@@ -2,9 +2,17 @@ import { z } from "zod";
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 import { setEquals } from "~/utils/collection-utls";
 import { createObjectFromEntries, type UnArray } from "~/utils/type-utils";
+import { applyCreatedBy } from "../auth";
 import { getBalance } from "../service/balance";
+import {
+    setEatAmount,
+    setFirmLevelFactor,
+    setFirmMaxLevel,
+    setTaxUpperBound,
+} from "../service/env-config";
 import { createTransferExchange, createTransferExchangeInputZod } from "../service/exchange";
 import { createFirm, createFirmInputZod, upgradeFirm, upgradeFirmInputZod } from "../service/firm";
+import { nextMonth } from "../service/monthly";
 import { authenticatePlayerInputZod, authenticatePlayers } from "../service/player";
 
 /**
@@ -13,6 +21,115 @@ import { authenticatePlayerInputZod, authenticatePlayers } from "../service/play
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
+    init: protectedProcedure.mutation(async ({ ctx }) => {
+        const def = {
+            monthlyCostCoin: 0,
+            productionCoinMean: 0,
+            productionCoinStdDevPerc: 0,
+            productionFoodStdDevPerc: 25,
+            productionLumberStdDevPerc: 25,
+            productionIronStdDevPerc: 25,
+        };
+        await ctx.db.firmType.create({
+            data: applyCreatedBy(ctx.session, {
+                name: "مزرعه",
+                costCoin: 800,
+                costFood: 70,
+                costLumber: 100,
+                costIron: 0,
+                monthlyCostFood: 20,
+                monthlyCostLumber: 0,
+                monthlyCostIron: 0,
+                productionFoodMean: 100,
+                productionLumberMean: 30,
+                productionIronMean: 0,
+                buildTimeMonths: 1 + 0,
+                ...def,
+            }),
+        });
+        await ctx.db.firmType.create({
+            data: applyCreatedBy(ctx.session, {
+                name: "باغ",
+                costCoin: 1000,
+                costFood: 170,
+                costLumber: 150,
+                costIron: 0,
+                monthlyCostFood: 50,
+                monthlyCostLumber: 0,
+                monthlyCostIron: 0,
+                productionFoodMean: 20,
+                productionLumberMean: 150,
+                productionIronMean: 0,
+                buildTimeMonths: 1 + 0,
+                ...def,
+            }),
+        });
+        await ctx.db.firmType.create({
+            data: applyCreatedBy(ctx.session, {
+                name: "معدن",
+                costCoin: 2000,
+                costFood: 200,
+                costLumber: 900,
+                costIron: 0,
+                monthlyCostFood: 250,
+                monthlyCostLumber: 100,
+                monthlyCostIron: 0,
+                productionFoodMean: 0,
+                productionLumberMean: 0,
+                productionIronMean: 60,
+                buildTimeMonths: 1 + 1,
+                ...def,
+            }),
+        });
+        await ctx.db.firmType.create({
+            data: applyCreatedBy(ctx.session, {
+                name: "کارخونه",
+                costCoin: 2000,
+                costFood: 400,
+                costLumber: 400,
+                costIron: 300,
+                monthlyCostFood: 100,
+                monthlyCostLumber: 0,
+                monthlyCostIron: 0,
+                productionFoodMean: 500,
+                productionLumberMean: 0,
+                productionIronMean: 0,
+                buildTimeMonths: 1 + 1,
+                ...def,
+            }),
+        });
+        await ctx.db.firmType.create({
+            data: applyCreatedBy(ctx.session, {
+                name: "مکانیزه",
+                costCoin: 2000,
+                costFood: 600,
+                costLumber: 1700,
+                costIron: 400,
+                monthlyCostFood: 800,
+                monthlyCostLumber: 300,
+                monthlyCostIron: 100,
+                productionFoodMean: 0,
+                productionLumberMean: 0,
+                productionIronMean: 300,
+                buildTimeMonths: 1 + 2,
+                ...def,
+            }),
+        });
+
+        await setFirmLevelFactor(ctx.session, 1.2);
+        await setFirmMaxLevel(ctx.session, 2);
+        await setTaxUpperBound(ctx.session, "coin", 100000);
+        await setTaxUpperBound(ctx.session, "food", 500);
+        await setTaxUpperBound(ctx.session, "lumber", 150);
+        await setTaxUpperBound(ctx.session, "iron", 200);
+        //await setInflationCoef(ctx.session, )
+        await setEatAmount(ctx.session, 20);
+    }),
+
+    nextMonth: protectedProcedure.mutation(async ({ ctx }) => {
+        await nextMonth(ctx.session);
+    }),
+
     player: createTRPCRouter({
         getAll: publicProcedure.query(async ({ ctx }) => {
             const players = await ctx.db.player.findMany();
@@ -22,6 +139,12 @@ export const appRouter = createTRPCRouter({
                     balance: await getBalance(player.id),
                 })),
             );
+        }),
+    }),
+
+    firmTypes: createTRPCRouter({
+        getAll: publicProcedure.query(async ({ ctx }) => {
+            return await ctx.db.firmType.findMany();
         }),
     }),
 
@@ -68,7 +191,7 @@ export const appRouter = createTRPCRouter({
                     data: createFirmInputZod,
                 }),
             )
-            .query(async ({ ctx, input }) => {
+            .mutation(async ({ ctx, input }) => {
                 if (
                     !setEquals(
                         input.auth.map((a) => a.playerId),
@@ -90,7 +213,7 @@ export const appRouter = createTRPCRouter({
                     data: upgradeFirmInputZod,
                 }),
             )
-            .query(async ({ ctx, input }) => {
+            .mutation(async ({ ctx, input }) => {
                 if (
                     !setEquals(
                         input.auth.map((a) => a.playerId),
@@ -114,7 +237,7 @@ export const appRouter = createTRPCRouter({
                     data: createTransferExchangeInputZod,
                 }),
             )
-            .query(async ({ ctx, input }) => {
+            .mutation(async ({ ctx, input }) => {
                 if (
                     !setEquals(
                         input.auth.map((a) => a.playerId),

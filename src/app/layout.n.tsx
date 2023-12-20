@@ -1,8 +1,9 @@
-import "~/styles/globals.css";
+import "~/styles/base-styles.scss";
 
 import nextFont from "next/font/local";
 import { cookies } from "next/headers";
 
+import { Suspense } from "react";
 import { TRPCReactProvider } from "~/trpc/react";
 
 const vazirmatn = nextFont({
@@ -16,11 +17,13 @@ export const metadata = {
     icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout(props: { children: React.ReactNode }) {
     return (
         <html lang="fa" dir="rtl">
             <body className={vazirmatn.className}>
-                <TRPCReactProvider cookies={cookies().toString()}>{children}</TRPCReactProvider>
+                <TRPCReactProvider cookies={cookies().toString()}>
+                    <Suspense>{props.children}</Suspense>
+                </TRPCReactProvider>
             </body>
         </html>
     );

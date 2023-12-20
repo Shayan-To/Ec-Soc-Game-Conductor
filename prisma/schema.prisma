@@ -19,7 +19,7 @@ model Player {
     id       Int    @id @default(autoincrement())
     name     String
     password String
-    picture  Bytes
+    // picture  Bytes
 
     exchangeWhereSender   Exchange[] @relation("Exchange_sender")
     exchangeWhereReceiver Exchange[] @relation("Exchange_receiver")

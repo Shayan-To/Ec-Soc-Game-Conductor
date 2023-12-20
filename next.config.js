@@ -5,6 +5,10 @@
 await import("./src/env.js");
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+    compress: true,
+    pageExtensions: ["p.tsx", "n.ts", "n.tsx"],
+    images: { unoptimized: true },
+};
 
 export default config;

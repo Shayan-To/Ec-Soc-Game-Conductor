@@ -1,0 +1,24 @@
+@use "sass:list";
+
+@function join-lists($lists...) {
+    @if (list.length($lists) == 0) {
+        @return ();
+    }
+    $res: list.nth($lists, 1);
+    @for $i from 2 through list.length($lists) {
+        $res: list.join($res, list.nth($lists, $i));
+    }
+    @return $res;
+}
+
+@function range($a, $b: -1) {
+    @if ($b == -1) {
+        $b: $a;
+        $a: 0;
+    }
+    $res: ();
+    @for $i from $a to $a + $b {
+        $res: list.join($res, $i);
+    }
+    @return $res;
+}

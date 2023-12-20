@@ -1,0 +1,77 @@
+html,
+body {
+    min-height: 100%;
+    padding: 0;
+    margin: 0;
+    font-family: Vazirmatn;
+}
+
+html,
+body,
+#__next {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+ol {
+    list-style-type: persian;
+}
+
+$dark-gray: #222;
+$light-gray: #ddd;
+
+$colors: (
+    primary: #ffb31a,
+    primaryAlt: #b27909,
+    secondary: #7979f2,
+    secondaryAlt: #5252cc,
+    buy: #41b62a,
+    sell: #ff3f3f,
+    dark-gray: $dark-gray,
+    light-gray: $light-gray,
+    white: white,
+    gray: gray,
+    gray2: #ABA69A,
+    black: black,
+    bg: #1c1b19,
+    fg: #fff,
+    bg2: #272523,
+    fg2: #bfbcb6,
+    bg3: #3c3a36,
+    green: #2e7d32,
+    yellow: #ed6c02,
+    red: #d32f2f,
+    bg-gold: #dba63c,
+);
+
+@each $k, $v in $colors {
+    .back-#{$k} {
+        background: $v;
+    }
+    .color-#{$k} {
+        color: $v;
+    }
+    .border-#{$k} {
+        border: 1px solid $v;
+    }
+}
+
+html {
+    color-scheme: dark;
+}
+
+body {
+    color: map-get($colors, "fg");
+    background: map-get($colors, "bg");
+}
+
+.MuiPaper-root {
+    background-image: none;
+}
+
