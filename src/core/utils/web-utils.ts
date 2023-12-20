@@ -9,7 +9,7 @@ export function fromQueryParams(p: URLSearchParams) {
 export function toQueryParams(o: { [key: string]: string }) {
     const p = new URLSearchParams();
     for (const k of Object.keys(o)) {
-        p.set(k, o[k]);
+        p.set(k, o[k]!);
     }
     return p;
 }

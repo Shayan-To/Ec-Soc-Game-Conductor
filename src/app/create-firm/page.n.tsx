@@ -147,6 +147,7 @@ function CreateFirm() {
                                 </span>
                             ))}
                         </div>
+                        <div className="row">{shareSum}% / 100%</div>
                     </Paper>
 
                     {state.playerData.map((pd, i) => (
@@ -167,6 +168,7 @@ function CreateFirm() {
                             {pd.enabled && (
                                 <>
                                     <TextField
+                                        label="درصد شراکت"
                                         value={pd.share}
                                         onChange={({ target }) => {
                                             pd.share = +target.value;
@@ -175,6 +177,7 @@ function CreateFirm() {
                                         error={shareSum !== 100}
                                     />
                                     <TextField
+                                        label="رمز"
                                         value={pd.password}
                                         onChange={({ target }) => {
                                             pd.password = target.value;
