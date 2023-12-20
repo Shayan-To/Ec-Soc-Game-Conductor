@@ -1,19 +1,23 @@
 import { type Session } from "next-auth";
-import { assets, exchangeActions, type Asset } from "~/base/entities";
+import { z } from "zod";
+import { assets, exchangeActions } from "~/base/entities";
 import { capitalize, createObjectFromEntries } from "~/utils/type-utils";
 import { applyCreatedBy } from "../auth";
 import { db } from "../db";
 import { getBalance } from "./balance";
 import { getMonth } from "./env-config";
 
+export const createTransferExchangeInputZod = z.object({
+    senderId: z.number().int(),
+    receiverId: z.number().int(),
+    ...createObjectFromEntries(
+        assets.map((asset) => [`received${capitalize(asset)}`, z.number().int()] as const),
+    ),
+});
+
 export async function createTransferExchange(
     session: Session,
-    data: {
-        senderId: number;
-        receiverId: number;
-    } & {
-        [k in `received${Capitalize<Asset>}`]: number;
-    },
+    data: z.infer<typeof createTransferExchangeInputZod>,
 ) {
     const month = await getMonth();
 

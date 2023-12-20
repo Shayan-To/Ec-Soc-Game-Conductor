@@ -1,25 +1,32 @@
 import { type Session } from "next-auth";
-import { assets, exchangeActions, type Asset } from "~/base/entities";
+import { z } from "zod";
+import { assets, exchangeActions } from "~/base/entities";
+import { setEquals } from "~/utils/collection-utls";
 import { capitalize, createObjectFromEntries } from "~/utils/type-utils";
 import { applyCreatedBy } from "../auth";
 import { db } from "../db";
 import { getBalance } from "./balance";
 import { getFirmMaxLevel, getMonth } from "./env-config";
 
-export async function createFirm(
-    session: Session,
-    data: {
-        typeId: number;
-        ownerships: ({
-            playerId: number;
-            ownershipPerc: number;
-        } & {
-            [k in `monthlyCost${Capitalize<Asset>}`]: number;
-        } & {
-            [k in `payed${Capitalize<Asset>}`]: number;
-        })[];
-    },
-) {
+export const createFirmInputZod = z.object({
+    typeId: z.number().int(),
+    ownerships: z
+        .object({
+            playerId: z.number().int(),
+            ownershipPerc: z.number().int().nonnegative().lte(100),
+            ...createObjectFromEntries(
+                assets.map(
+                    (asset) => [`monthlyCost${capitalize(asset)}`, z.number().int()] as const,
+                ),
+            ),
+            ...createObjectFromEntries(
+                assets.map((asset) => [`payed${capitalize(asset)}`, z.number().int()] as const),
+            ),
+        })
+        .array(),
+});
+
+export async function createFirm(session: Session, data: z.infer<typeof createFirmInputZod>) {
     const month = await getMonth();
     const type = await db.firmType.findFirst({ where: { id: data.typeId } });
     if (type === null) {
@@ -134,19 +141,24 @@ export async function createFirm(
     }
 }
 
-export async function upgradeFirm(
-    session: Session,
-    data: {
-        firmId: number;
-        ownerships: ({
-            playerId: number;
-        } & {
-            [k in `monthlyCost${Capitalize<Asset>}`]: number;
-        } & {
-            [k in `payed${Capitalize<Asset>}`]: number;
-        })[];
-    },
-) {
+export const upgradeFirmInputZod = z.object({
+    firmId: z.number().int(),
+    ownerships: z
+        .object({
+            playerId: z.number().int(),
+            ...createObjectFromEntries(
+                assets.map(
+                    (asset) => [`monthlyCost${capitalize(asset)}`, z.number().int()] as const,
+                ),
+            ),
+            ...createObjectFromEntries(
+                assets.map((asset) => [`payed${capitalize(asset)}`, z.number().int()] as const),
+            ),
+        })
+        .array(),
+});
+
+export async function upgradeFirm(session: Session, data: z.infer<typeof upgradeFirmInputZod>) {
     const month = await getMonth();
     const maxLevel = await getFirmMaxLevel();
 
@@ -180,16 +192,14 @@ export async function upgradeFirm(
         }
     });
 
-    data.ownerships.forEach((o) => {
-        if (firm.ownerships.some((fo) => fo.playerId === o.playerId)) {
-            throw new Error(`playerId ${o.playerId} is not an owner of this firm.`);
-        }
-    });
-    firm.ownerships.forEach((o) => {
-        if (data.ownerships.some((fo) => fo.playerId === o.playerId)) {
-            throw new Error(`firm owner ${o.playerId} is not included in data.`);
-        }
-    });
+    if (
+        !setEquals(
+            data.ownerships.map((o) => o.playerId),
+            firm.ownerships.map((o) => o.playerId),
+        )
+    ) {
+        throw new Error(`playerIds of ownerships does not match firm owners.`);
+    }
 
     for (const asset of assets) {
         const totalAssetMonthlyCost = data.ownerships.reduce(
